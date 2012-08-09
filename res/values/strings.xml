@@ -1,0 +1,14 @@
+<resources>
+
+    <string name="app_name">BluetoothClient</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
+    
+	<!-- Labels -->
+	<string name="host_mac_address">Host MAC address :</string>
+
+	<!-- Default values -->
+    <string name="default_mac_address">00&#8211;22&#8211;15&#8211;1A&#8211;9B&#8211;B1</string>
+
+</resources>
