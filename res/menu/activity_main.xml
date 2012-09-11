@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/menu_settings"
-        android:title="@string/menu_settings"
+    <item android:id="@+id/searchBTDevices"
+        android:title="@string/search_bt_devices"
         android:orderInCategory="100"
-        android:showAsAction="never" />
+        android:showAsAction="ifRoom|withText" />
 </menu>
