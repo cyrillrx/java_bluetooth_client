@@ -33,7 +33,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 
-		case R.id.searchBTDevices:
+		case R.id.miSearchBTDevices:
 			startActivity(new Intent(this, BTDeviceListActivity.class));
 			return true;
 		default:
