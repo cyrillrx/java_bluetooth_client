@@ -15,5 +15,12 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:textSize="16sp" />
+    
+    <TextView
+        android:id="@+id/tvDeviceType"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical|right"
+        android:textSize="16sp" />
 
 </LinearLayout>

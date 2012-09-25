@@ -34,7 +34,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		switch (item.getItemId()) {
 
 		case R.id.miSearchBTDevices:
-			startActivity(new Intent(this, BTDeviceListActivity.class));
+			startActivity(new Intent(this, DeviceListActivity.class));
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);

@@ -4,15 +4,15 @@ import static android.bluetooth.BluetoothAdapter.ACTION_DISCOVERY_FINISHED;
 import static android.bluetooth.BluetoothDevice.ACTION_FOUND;
 import static android.view.Window.FEATURE_INDETERMINATE_PROGRESS;
 import static org.es.bluetoothclient.BuildConfig.DEBUG;
-import static org.es.bluetoothclient.components.BTDeviceInfo.TYPE_NEW;
-import static org.es.bluetoothclient.components.BTDeviceInfo.TYPE_PAIRED;
+import static org.es.bluetoothclient.components.BTDevice.TYPE_NEW;
+import static org.es.bluetoothclient.components.BTDevice.TYPE_PAIRED;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.es.bluetoothclient.components.BTDeviceInfo;
-import org.es.bluetoothclient.components.BTDeviceListAdapter;
+import org.es.bluetoothclient.components.BTDevice;
+import org.es.bluetoothclient.components.DeviceListAdapter;
 import org.es.bluetoothclient.utils.IntentKey;
 
 import android.app.ListActivity;
@@ -37,12 +37,12 @@ import android.widget.ListView;
  * @author Cyril Leroux
  *
  */
-public class BTDeviceListActivity extends ListActivity {
+public class DeviceListActivity extends ListActivity {
 
 	private static final String TAG = "BTDeviceListActivity";
 
 	private BluetoothAdapter mBluetoothAdapter;
-	private List<BTDeviceInfo> mBondedDeviceList;
+	private List<BTDevice> mBondedDeviceList;
 
 	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
 
@@ -55,7 +55,7 @@ public class BTDeviceListActivity extends ListActivity {
 				if ( DEBUG) {
 					Log.d(TAG, "Discovered " + device.getName());
 				}
-				mBondedDeviceList.add(new BTDeviceInfo(device, TYPE_NEW));
+				mBondedDeviceList.add(new BTDevice(device, TYPE_NEW));
 
 			} else if (ACTION_DISCOVERY_FINISHED.equals(action)) {
 				if ( DEBUG) {
@@ -83,7 +83,7 @@ public class BTDeviceListActivity extends ListActivity {
 		registerReceiver(mReceiver, new IntentFilter(ACTION_DISCOVERY_FINISHED));
 
 		if (mBondedDeviceList == null) {
-			mBondedDeviceList = new ArrayList<BTDeviceInfo>();
+			mBondedDeviceList = new ArrayList<BTDevice>();
 		}
 
 		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -93,7 +93,7 @@ public class BTDeviceListActivity extends ListActivity {
 		if (pairedDevices.size() > 0) {
 			//			findViewById(R.id.title_paired_devices).setVisibility(View.VISIBLE);
 			for (BluetoothDevice device : pairedDevices) {
-				mBondedDeviceList.add(new BTDeviceInfo(device, TYPE_PAIRED));
+				mBondedDeviceList.add(new BTDevice(device, TYPE_PAIRED));
 			}
 		} else {
 			//			String noDevices = getResources().getText(R.string.none_paired).toString();
@@ -134,7 +134,7 @@ public class BTDeviceListActivity extends ListActivity {
 
 	private void updateView() {
 
-		BTDeviceListAdapter adapter = new BTDeviceListAdapter(getApplicationContext(), mBondedDeviceList);
+		DeviceListAdapter adapter = new DeviceListAdapter(getApplicationContext(), mBondedDeviceList);
 		setListAdapter(adapter);
 		ListView listView = getListView();
 
@@ -145,7 +145,7 @@ public class BTDeviceListActivity extends ListActivity {
 				if (mBluetoothAdapter.isDiscovering()) {
 					mBluetoothAdapter.cancelDiscovery();
 				}
-				BTDeviceInfo device = mBondedDeviceList.get(position);
+				BTDevice device = mBondedDeviceList.get(position);
 				Intent intent = new Intent();
 				intent.putExtra(IntentKey.EXTRA_DEVICE_ADDRESS, device.getAddress());
 			}

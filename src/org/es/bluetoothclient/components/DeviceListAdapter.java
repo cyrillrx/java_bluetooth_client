@@ -15,9 +15,9 @@ import android.widget.TextView;
  * @author Cyril Leroux
  *
  */
-public class BTDeviceListAdapter extends BaseAdapter {
+public class DeviceListAdapter extends BaseAdapter {
 
-	List<BTDeviceInfo> mDeviceList;
+	List<BTDevice> mDeviceList;
 	private final LayoutInflater mInflater;
 
 	/**
@@ -25,7 +25,7 @@ public class BTDeviceListAdapter extends BaseAdapter {
 	 * @param context
 	 * @param deviceList
 	 */
-	public BTDeviceListAdapter(final Context context, final List<BTDeviceInfo> deviceList) {
+	public DeviceListAdapter(final Context context, final List<BTDevice> deviceList) {
 		mInflater = LayoutInflater.from(context);
 		mDeviceList = deviceList;
 	}
@@ -55,6 +55,7 @@ public class BTDeviceListAdapter extends BaseAdapter {
 	public static class ViewHolder {
 		TextView tvDeviceName;
 		TextView tvDeviceAddress;
+		TextView tvDeviceType;
 	}
 
 	@Override
@@ -64,16 +65,18 @@ public class BTDeviceListAdapter extends BaseAdapter {
 		if (convertView == null) {
 			convertView = mInflater.inflate(R.layout.device_item, null);
 			holder = new ViewHolder();
-			holder.tvDeviceName = (TextView) convertView.findViewById(R.id.tvDeviceName);
-			holder.tvDeviceAddress = (TextView) convertView.findViewById(R.id.tvDeviceAddress);
+			holder.tvDeviceName		= (TextView) convertView.findViewById(R.id.tvDeviceName);
+			holder.tvDeviceAddress	= (TextView) convertView.findViewById(R.id.tvDeviceAddress);
+			holder.tvDeviceType		= (TextView) convertView.findViewById(R.id.tvDeviceType);
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
 
-		BTDeviceInfo device = mDeviceList.get(position);
+		BTDevice device = mDeviceList.get(position);
 		holder.tvDeviceName.setText(device.getName());
 		holder.tvDeviceAddress.setText(device.getAddress());
+		holder.tvDeviceType.setText(device.getType());
 
 		return convertView;
 	}

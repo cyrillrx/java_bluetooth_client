@@ -7,7 +7,7 @@ import android.bluetooth.BluetoothDevice;
  * @author Cyril Leroux
  *
  */
-public class BTDeviceInfo {
+public class BTDevice {
 
 	/**
 	 * 
@@ -27,7 +27,7 @@ public class BTDeviceInfo {
 	 * @param device
 	 * @param type
 	 */
-	public BTDeviceInfo(BluetoothDevice device, String type) {
+	public BTDevice(BluetoothDevice device, String type) {
 		mName		= device.getName();
 		mAddress	= device.getAddress();
 		mType		= type;
