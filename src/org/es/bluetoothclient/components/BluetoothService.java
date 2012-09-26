@@ -32,7 +32,7 @@ import android.util.Log;
  * The last thread performs data transmissions when connected.
  * @author Cyril Leroux
  */
-public class BluetoothConnector {
+public class BluetoothService {
 
 	// Constants that indicate the current connection state
 	/** Doing nothing. */
@@ -68,7 +68,7 @@ public class BluetoothConnector {
 	 * @param context
 	 * @param handler
 	 */
-	public BluetoothConnector(Context context, Handler handler) {
+	public BluetoothService(Context context, Handler handler) {
 		mAdapter = BluetoothAdapter.getDefaultAdapter();
 		mState = STATE_NONE;
 		mHandler = handler;
@@ -248,7 +248,7 @@ public class BluetoothConnector {
 		mHandler.sendMessage(msg);
 
 		// Start the service over to restart listening mode
-		BluetoothConnector.this.start();
+		BluetoothService.this.start();
 	}
 
 	/**
@@ -263,7 +263,7 @@ public class BluetoothConnector {
 		mHandler.sendMessage(msg);
 
 		// Start the service over to restart listening mode
-		BluetoothConnector.this.start();
+		BluetoothService.this.start();
 	}
 
 	/**
@@ -318,7 +318,7 @@ public class BluetoothConnector {
 
 				// If a connection was accepted
 				if (socket != null) {
-					synchronized (BluetoothConnector.this) {
+					synchronized (BluetoothService.this) {
 						switch (mState) {
 						case STATE_LISTEN:
 						case STATE_CONNECTING:
@@ -422,7 +422,7 @@ public class BluetoothConnector {
 			}
 
 			// Reset the ConnectThread because we're done
-			synchronized (BluetoothConnector.this) {
+			synchronized (BluetoothService.this) {
 				mConnectThread = null;
 			}
 
@@ -495,7 +495,7 @@ public class BluetoothConnector {
 					}
 					connectionLost();
 					// Start the service over to restart listening mode
-					BluetoothConnector.this.start();
+					BluetoothService.this.start();
 					break;
 				}
 			}

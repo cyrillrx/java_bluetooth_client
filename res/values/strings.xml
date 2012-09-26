@@ -9,6 +9,7 @@
     <string name="empty_device_list">No device found&#8230;</string>
     <string name="search_bt_devices">Search BT devices</string>
     <string name="refresh_bt_devices">Refresh BT devices</string>
+    <string name="not_connected">No device connected&#8230;</string>
     
 	<!-- Labels -->
 	<string name="host_mac_address">Host MAC address :</string>
