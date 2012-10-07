@@ -10,6 +10,10 @@
     <string name="search_bt_devices">Search BT devices</string>
     <string name="refresh_bt_devices">Refresh BT devices</string>
     <string name="not_connected">No device connected&#8230;</string>
+   
+	<!-- Actions -->
+    <string name="on">On</string>
+    <string name="off">Off</string>
     
 	<!-- Labels -->
 	<string name="host_mac_address">Host MAC address :</string>
