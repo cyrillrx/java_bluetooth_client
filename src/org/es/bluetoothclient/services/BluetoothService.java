@@ -1,4 +1,4 @@
-package org.es.bluetoothclient.components;
+package org.es.bluetoothclient.services;
 
 import static org.es.bluetoothclient.BuildConfig.DEBUG;
 import static org.es.bluetoothclient.utils.IntentKey.DEVICE_NAME;
@@ -19,9 +19,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.IntentSender.SendIntentException;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -79,9 +77,9 @@ public class BluetoothService {
 	 * @param handler
 	 */
 	public BluetoothService(Context context, Handler handler) {
-		mAdapter = BluetoothAdapter.getDefaultAdapter();
-		mState = STATE_NONE;
-		mHandler = handler;
+		mAdapter	= BluetoothAdapter.getDefaultAdapter();
+		mState		= STATE_NONE;
+		mHandler	= handler;
 	}
 
 	/**
@@ -289,8 +287,8 @@ public class BluetoothService {
 		mHandler.sendMessage(msg);
 
 		// Start the service over to restart listening mode
+		//BluetoothService.this.start();
 		start();
-		//		BluetoothService.this.start();
 	}
 
 	/**
@@ -309,7 +307,8 @@ public class BluetoothService {
 		mHandler.sendMessage(msg);
 
 		// Start the service over to restart listening mode
-		BluetoothService.this.start();
+		//BluetoothService.this.start();
+		start();
 	}
 
 	/**
@@ -359,6 +358,7 @@ public class BluetoothService {
 					// This is a blocking call and will only return on a
 					// successful connection or an exception
 					socket = mmServerSocket.accept();
+
 				} catch (IOException e) {
 					if (DEBUG) {
 						Log.e(TAG, "Socket Type: " + mSocketType + "accept() failed", e);
@@ -375,6 +375,7 @@ public class BluetoothService {
 							// Situation normal. Start the connected thread.
 							connected(socket, socket.getRemoteDevice(), mSocketType);
 							break;
+
 						case STATE_NONE:
 						case STATE_CONNECTED:
 							// Either not ready or already connected. Terminate new socket.
@@ -386,6 +387,7 @@ public class BluetoothService {
 								}
 							}
 							break;
+
 						}
 					}
 				}
@@ -467,7 +469,6 @@ public class BluetoothService {
 				// Close the socket
 				closeSocket();
 				connectionFailed();
-				BluetoothService.this.start();
 				return;
 			}
 
@@ -541,13 +542,14 @@ public class BluetoothService {
 					bytes = mmInStream.read(buffer);
 
 					// Send the obtained bytes to the UI Activity
-					mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
-					.sendToTarget();
+					mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+
 				} catch (IOException e) {
 					if (DEBUG) {
 						Log.e(TAG, "disconnected", e);
 					}
 					connectionLost();
+
 					// Start the service over to restart listening mode
 					BluetoothService.this.start();
 					break;
@@ -564,8 +566,8 @@ public class BluetoothService {
 				mmOutStream.write(buffer);
 
 				// Share the sent message back to the UI Activity
-				mHandler.obtainMessage(MESSAGE_WRITE, -1, -1, buffer)
-				.sendToTarget();
+				mHandler.obtainMessage(MESSAGE_WRITE, -1, -1, buffer).sendToTarget();
+
 			} catch (IOException e) {
 				if (DEBUG) {
 					Log.e(TAG, "Exception during write", e);

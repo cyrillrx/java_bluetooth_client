@@ -2,21 +2,15 @@ package org.es.bluetoothclient;
 
 import static android.view.Window.FEATURE_INDETERMINATE_PROGRESS;
 import static org.es.bluetoothclient.BuildConfig.DEBUG;
-import static org.es.bluetoothclient.components.BluetoothService.ACTION_CONNECTED;
-import static org.es.bluetoothclient.components.BluetoothService.ACTION_CONNECTING;
-import static org.es.bluetoothclient.components.BluetoothService.ACTION_LISTEN;
-import static org.es.bluetoothclient.components.BluetoothService.ACTION_NONE;
+import static org.es.bluetoothclient.services.BluetoothService.STATE_NONE;
 
-import org.es.bluetoothclient.components.BluetoothService;
+import org.es.bluetoothclient.services.BluetoothService;
 import org.es.bluetoothclient.utils.IntentKey;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -89,24 +83,24 @@ public class MainActivity extends Activity implements OnClickListener {
 		}
 	};
 
-	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			final String action = intent.getAction();
-
-			if (ACTION_CONNECTED.equals(action)) {
-			} else if (ACTION_CONNECTING.equals(action)) {
-			} else if (ACTION_LISTEN.equals(action)) {
-			} else if (ACTION_NONE.equals(action)) {
-
-			} else {
-				if ( DEBUG) {
-					Log.d(TAG, "Action : " + action);
-				}
-			}
-		}
-	};
+	//	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+	//
+	//		@Override
+	//		public void onReceive(Context context, Intent intent) {
+	//			final String action = intent.getAction();
+	//
+	//			if (ACTION_CONNECTED.equals(action)) {
+	//			} else if (ACTION_CONNECTING.equals(action)) {
+	//			} else if (ACTION_LISTEN.equals(action)) {
+	//			} else if (ACTION_NONE.equals(action)) {
+	//
+	//			} else {
+	//				if ( DEBUG) {
+	//					Log.d(TAG, "Action : " + action);
+	//				}
+	//			}
+	//		}
+	//	};
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -114,24 +108,28 @@ public class MainActivity extends Activity implements OnClickListener {
 		requestWindowFeature(FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_main);
 
-		registerReceiver(mReceiver, new IntentFilter(ACTION_CONNECTED));
-		registerReceiver(mReceiver, new IntentFilter(ACTION_CONNECTING));
-		registerReceiver(mReceiver, new IntentFilter(ACTION_LISTEN));
-		registerReceiver(mReceiver, new IntentFilter(ACTION_NONE));
+		//		registerReceiver(mReceiver, new IntentFilter(ACTION_CONNECTED));
+		//		registerReceiver(mReceiver, new IntentFilter(ACTION_CONNECTING));
+		//		registerReceiver(mReceiver, new IntentFilter(ACTION_LISTEN));
+		//		registerReceiver(mReceiver, new IntentFilter(ACTION_NONE));
 
 		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
 		mEditTextLog = (EditText) findViewById(R.id.etConsole);
 	}
 
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		unregisterReceiver(mReceiver);
-	}
+	//	@Override
+	//	protected void onDestroy() {
+	//		super.onDestroy();
+	//		unregisterReceiver(mReceiver);
+	//	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
+		if(DEBUG) {
+			Log.e(TAG, "++ ON START ++");
+		}
 
 		// If BT is not on, request that it be enabled.
 		// setupChat() will then be called during onActivityResult
@@ -143,6 +141,37 @@ public class MainActivity extends Activity implements OnClickListener {
 			if (mBluetoothService == null) {
 				initBluetoothService();
 			}
+		}
+	}
+
+	@Override
+	public synchronized void onResume() {
+		super.onResume();
+		if(DEBUG) {
+			Log.e(TAG, "+ ON RESUME +");
+		}
+
+		// Performing this check in onResume() covers the case in which BT was
+		// not enabled during onStart(), so we were paused to enable it...
+		// onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
+		if (mBluetoothService != null) {
+			// Only if the state is STATE_NONE, do we know that we haven't started already
+			if (STATE_NONE == mBluetoothService.getState()) {
+				// Start the Bluetooth chat services
+				mBluetoothService.start();
+			}
+		}
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if(DEBUG) {
+			Log.e(TAG, "--- ON DESTROY ---");
+		}
+		// Stop the Bluetooth chat services
+		if (mBluetoothService != null) {
+			mBluetoothService.stop();
 		}
 	}
 
