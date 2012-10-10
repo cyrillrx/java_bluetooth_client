@@ -16,11 +16,5 @@
 	<!-- Actions -->
     <string name="on">On</string>
     <string name="off">Off</string>
-    
-	<!-- Labels -->
-	<string name="host_mac_address">Host MAC address :</string>
-
-	<!-- Default values -->
-    <string name="default_mac_address">00&#8211;22&#8211;15&#8211;1A&#8211;9B&#8211;B1</string>
 
 </resources>

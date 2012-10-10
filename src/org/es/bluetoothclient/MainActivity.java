@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -51,8 +52,8 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	private BluetoothAdapter mBluetoothAdapter;
 	private BluetoothService mBluetoothService;
-	private StringBuffer mOutStringBuffer;
-	private EditText mEditTextLog;
+	private EditText mEtConsole;
+	private EditText mEtMessage;
 
 	/** The Handler that gets information back from the BluetoothService */
 	private final Handler mHandler = new Handler() {
@@ -60,24 +61,34 @@ public class MainActivity extends Activity implements OnClickListener {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case MESSAGE_STATE_CHANGE:
-				Log.d(TAG, "MESSAGE_STATE_CHANGE");
+				if (DEBUG) {
+					Log.d(TAG, "MESSAGE_STATE_CHANGE");
+				}
 				stateChanged(msg.arg1);
 				break;
 
 			case MESSAGE_WRITE:
-				Log.d(TAG, "MESSAGE_WRITE");
+				if (DEBUG) {
+					Log.d(TAG, "MESSAGE_WRITE");
+				}
 				break;
 
 			case MESSAGE_READ:
-				Log.d(TAG, "MESSAGE_READ");
+				if (DEBUG) {
+					Log.d(TAG, "MESSAGE_READ");
+				}
 				break;
 
 			case MESSAGE_DEVICE_NAME:
-				Log.d(TAG, "MESSAGE_DEVICE_NAME");
+				if (DEBUG) {
+					Log.d(TAG, "MESSAGE_DEVICE_NAME");
+				}
 				break;
 
 			case MESSAGE_TOAST:
-				Log.d(TAG, "MESSAGE_TOAST : " + msg.getData().getString(IntentKey.TOAST));
+				if (DEBUG) {
+					Log.d(TAG, "MESSAGE_TOAST : " + msg.getData().getString(IntentKey.TOAST));
+				}
 				break;
 			}
 		}
@@ -97,8 +108,12 @@ public class MainActivity extends Activity implements OnClickListener {
 			finish();
 			return;
 		}
+		((Button) findViewById(R.id.btnLightOn)).setOnClickListener(this);
+		((Button) findViewById(R.id.btnLightOff)).setOnClickListener(this);
+		((Button) findViewById(R.id.btnSend)).setOnClickListener(this);
 
-		mEditTextLog = (EditText) findViewById(R.id.etConsole);
+		mEtConsole = (EditText) findViewById(R.id.etConsole);
+		mEtMessage = (EditText) findViewById(R.id.etTextToSend);
 	}
 
 	@Override
@@ -180,13 +195,14 @@ public class MainActivity extends Activity implements OnClickListener {
 			sendMessage("0");
 			break;
 		case R.id.btnSend :
-			// TODO send an event through bluetooth.
+			final String message = mEtMessage.getText().toString();
+			mEtMessage.getText().clear();
+			sendMessage(message);
 			break;
 
 		default:
 			break;
 		}
-
 	}
 
 	@Override
@@ -234,9 +250,9 @@ public class MainActivity extends Activity implements OnClickListener {
 	private void connectDevice(Intent data, boolean secure) {
 		final String address = data.getExtras().getString(IntentKey.EXTRA_DEVICE_ADDRESS);
 		if (secure) {
-			mEditTextLog.getText().append("Connect secure to " + address + "\n");
+			mEtConsole.getText().append("Connect secure to " + address + "\n");
 		} else {
-			mEditTextLog.getText().append("Connect insecure to " + address + "\n");
+			mEtConsole.getText().append("Connect insecure to " + address + "\n");
 		}
 		BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
 		mBluetoothService.connect(device, secure);
@@ -249,15 +265,16 @@ public class MainActivity extends Activity implements OnClickListener {
 
 		// Initialize the BluetoothService to perform Bluetooth connections
 		mBluetoothService = new BluetoothService(getApplicationContext(), mHandler);
-		// Initialize the buffer for outgoing messages
-		mOutStringBuffer = new StringBuffer("");
 	}
 
 	/**
 	 * Sends a message.
 	 * @param message The message to send over bluetooth.
 	 */
-	private void sendMessage(String message) {
+	private void sendMessage(final String message) {
+		if (DEBUG) {
+			Log.d(TAG, "sendMessage() : " + message);
+		}
 		// Check that we're actually connected before trying anything
 		if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
 			Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
@@ -265,13 +282,10 @@ public class MainActivity extends Activity implements OnClickListener {
 		}
 		// Check that there's actually something to send
 		if (message.length() > 0) {
+			mEtConsole.getText().append("Sending : " + message + "\n");
 			// Get the message bytes and tell the BluetoothChatService to write
 			byte[] send = message.getBytes();
 			mBluetoothService.write(send);
-
-			// Reset out string buffer to zero and clear the edit text field
-			mOutStringBuffer.setLength(0);
-			//mOutEditText.setText(mOutStringBuffer);
 		}
 	}
 
@@ -279,22 +293,34 @@ public class MainActivity extends Activity implements OnClickListener {
 		switch (message) {
 
 		case BluetoothService.STATE_CONNECTED:
-			Log.d(TAG, "Current state : CONNECTED");
-			setProgressBarIndeterminateVisibility(true);
+			if (DEBUG) {
+				Log.d(TAG, "Current state : CONNECTED");
+			}
+			mEtConsole.getText().append("State : CONNECTED\n");
+			setProgressBarIndeterminateVisibility(false);
 			break;
 
 		case BluetoothService.STATE_CONNECTING:
-			Log.d(TAG, "Current state : CONNECTING");
+			if (DEBUG) {
+				Log.d(TAG, "Current state : CONNECTING");
+			}
+			mEtConsole.getText().append("State : CONNECTING\n");
 			setProgressBarIndeterminateVisibility(true);
 			break;
 
 		case BluetoothService.STATE_LISTEN:
-			Log.d(TAG, "Current state : LISTEN");
+			if (DEBUG) {
+				Log.d(TAG, "Current state : LISTEN");
+			}
+			mEtConsole.getText().append("State : LISTEN\n");
 			setProgressBarIndeterminateVisibility(false);
 			break;
 
 		case BluetoothService.STATE_NONE:
-			Log.d(TAG, "Current state : NONE");
+			if (DEBUG) {
+				Log.d(TAG, "Current state : NONE");
+			}
+			mEtConsole.getText().append("State : NONE\n");
 			setProgressBarIndeterminateVisibility(false);
 			break;
 

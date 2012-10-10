@@ -98,6 +98,7 @@ public class DeviceListActivity extends ListActivity {
 			for (BluetoothDevice device : pairedDevices) {
 				mDeviceList.add(new BTDevice(device, TYPE_PAIRED));
 			}
+			updateView();
 		} else {
 			//			String noDevices = getResources().getText(R.string.none_paired).toString();
 			//			mPairedDevicesArrayAdapter.add(noDevices);
