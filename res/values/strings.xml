@@ -10,6 +10,8 @@
     <string name="search_bt_devices">Search BT devices</string>
     <string name="refresh_bt_devices">Refresh BT devices</string>
     <string name="not_connected">No device connected&#8230;</string>
+    <string name="bt_not_supported_leaving">Bluetooth is not supported. Leaving the application.</string>
+    <string name="bt_not_enabled_leaving">Bluetooth is not enabled. Leaving the application.</string>
    
 	<!-- Actions -->
     <string name="on">On</string>
