@@ -1,11 +1,11 @@
 package org.es.bluetoothclient;
 
 import static android.view.Window.FEATURE_INDETERMINATE_PROGRESS;
-import static org.es.bluetoothclient.BuildConfig.DEBUG;
 import static org.es.bluetoothclient.services.BluetoothService.STATE_NONE;
 
 import org.es.bluetoothclient.services.BluetoothService;
 import org.es.bluetoothclient.utils.IntentKey;
+import org.es.bluetoothclient.utils.Log;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -14,7 +14,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -61,34 +60,24 @@ public class MainActivity extends Activity implements OnClickListener {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case MESSAGE_STATE_CHANGE:
-				if (DEBUG) {
-					Log.d(TAG, "MESSAGE_STATE_CHANGE");
-				}
+				Log.debug(TAG, "MESSAGE_STATE_CHANGE");
 				stateChanged(msg.arg1);
 				break;
 
 			case MESSAGE_WRITE:
-				if (DEBUG) {
-					Log.d(TAG, "MESSAGE_WRITE");
-				}
+				Log.debug(TAG, "MESSAGE_WRITE");
 				break;
 
 			case MESSAGE_READ:
-				if (DEBUG) {
-					Log.d(TAG, "MESSAGE_READ");
-				}
+				Log.debug(TAG, "MESSAGE_READ");
 				break;
 
 			case MESSAGE_DEVICE_NAME:
-				if (DEBUG) {
-					Log.d(TAG, "MESSAGE_DEVICE_NAME");
-				}
+				Log.debug(TAG, "MESSAGE_DEVICE_NAME");
 				break;
 
 			case MESSAGE_TOAST:
-				if (DEBUG) {
-					Log.d(TAG, "MESSAGE_TOAST : " + msg.getData().getString(IntentKey.TOAST));
-				}
+				Log.debug(TAG, "MESSAGE_TOAST : " + msg.getData().getString(IntentKey.TOAST));
 				break;
 			}
 		}
@@ -119,9 +108,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	@Override
 	public void onStart() {
 		super.onStart();
-		if(DEBUG) {
-			Log.e(TAG, "++ ON START ++");
-		}
+		Log.error(TAG, "++ ON START ++");
 
 		// If Bluetooth is not on, request that it be enabled.
 		if (!mBluetoothAdapter.isEnabled()) {
@@ -137,9 +124,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	@Override
 	public synchronized void onResume() {
 		super.onResume();
-		if(DEBUG) {
-			Log.e(TAG, "+ ON RESUME +");
-		}
+		Log.error(TAG, "+ ON RESUME +");
 
 		// Performing this check in onResume() covers the case in which BT was
 		// not enabled during onStart(), so we were paused to enable it...
@@ -158,9 +143,8 @@ public class MainActivity extends Activity implements OnClickListener {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		if(DEBUG) {
-			Log.e(TAG, "--- ON DESTROY ---");
-		}
+		Log.error(TAG, "--- ON DESTROY ---");
+		
 		// Stop the Bluetooth chat services
 		if (mBluetoothService != null) {
 			mBluetoothService.stop();
@@ -207,9 +191,8 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(DEBUG) {
-			Log.d(TAG, "onActivityResult " + resultCode);
-		}
+		Log.debug(TAG, "onActivityResult " + resultCode);
+		
 		switch (requestCode) {
 		case REQUEST_CONNECT_DEVICE_SECURE:
 			// When DeviceListActivity returns with a device to connect
@@ -230,9 +213,7 @@ public class MainActivity extends Activity implements OnClickListener {
 				initBluetoothService();
 			} else {
 				// User did not enable Bluetooth or an error occured
-				if (DEBUG) {
-					Log.e(TAG, "Bluetooth not enabled");
-				}
+				Log.error(TAG, "Bluetooth not enabled");
 				Toast.makeText(this, R.string.bt_not_enabled_leaving, Toast.LENGTH_SHORT).show();
 				finish();
 			}
@@ -259,9 +240,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	}
 
 	private void initBluetoothService() {
-		if (DEBUG) {
-			Log.d(TAG, "initBluetoothService()");
-		}
+		Log.debug(TAG, "initBluetoothService()");
 
 		// Initialize the BluetoothService to perform Bluetooth connections
 		mBluetoothService = new BluetoothService(getApplicationContext(), mHandler);
@@ -272,9 +251,8 @@ public class MainActivity extends Activity implements OnClickListener {
 	 * @param message The message to send over bluetooth.
 	 */
 	private void sendMessage(final String message) {
-		if (DEBUG) {
-			Log.d(TAG, "sendMessage() : " + message);
-		}
+		Log.debug(TAG, "sendMessage() : " + message);
+
 		// Check that we're actually connected before trying anything
 		if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
 			Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
@@ -293,33 +271,25 @@ public class MainActivity extends Activity implements OnClickListener {
 		switch (message) {
 
 		case BluetoothService.STATE_CONNECTED:
-			if (DEBUG) {
-				Log.d(TAG, "Current state : CONNECTED");
-			}
+			Log.debug(TAG, "Current state : CONNECTED");
 			mEtConsole.getText().append("State : CONNECTED\n");
 			setProgressBarIndeterminateVisibility(false);
 			break;
 
 		case BluetoothService.STATE_CONNECTING:
-			if (DEBUG) {
-				Log.d(TAG, "Current state : CONNECTING");
-			}
+			Log.debug(TAG, "Current state : CONNECTING");
 			mEtConsole.getText().append("State : CONNECTING\n");
 			setProgressBarIndeterminateVisibility(true);
 			break;
 
 		case BluetoothService.STATE_LISTEN:
-			if (DEBUG) {
-				Log.d(TAG, "Current state : LISTEN");
-			}
+			Log.debug(TAG, "Current state : LISTEN");
 			mEtConsole.getText().append("State : LISTEN\n");
 			setProgressBarIndeterminateVisibility(false);
 			break;
 
 		case BluetoothService.STATE_NONE:
-			if (DEBUG) {
-				Log.d(TAG, "Current state : NONE");
-			}
+			Log.debug(TAG, "Current state : NONE");
 			mEtConsole.getText().append("State : NONE\n");
 			setProgressBarIndeterminateVisibility(false);
 			break;
